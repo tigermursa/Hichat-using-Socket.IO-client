@@ -6,12 +6,11 @@ const MentorCard = ({ mentor }) => {
     <div className="max-w-sm rounded overflow-hidden shadow-lg p-6 bg-white text-center">
       <img
         className="w-24 h-24 rounded-full mx-auto"
-        src={mentor.img}
+        src={mentor.img || "https://via.placeholder.com/150"} // Use a placeholder or default image
         alt={mentor.name}
       />
       <div className="mt-4">
         <h3 className="text-lg font-bold">{mentor.name}</h3>
-        <p className="text-gray-600">DENMARK</p>
         <div className="mt-4 flex justify-center space-x-4">
           <button className="bg-blue-500 text-white px-4 py-2 rounded">
             APPOINTMENT
@@ -32,7 +31,7 @@ MentorCard.propTypes = {
   mentor: PropTypes.shape({
     id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
-    img: PropTypes.string.isRequired,
+    img: PropTypes.string, // img is optional
   }).isRequired,
 };
 

@@ -1,38 +1,46 @@
-import { Link, useParams } from "react-router-dom";
-import { mentorsData } from "../../Database/mentorsData";
-import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 const Conversation = () => {
   const { mentorId } = useParams();
-  const mentor = mentorsData.find((m) => m.id === mentorId);
+  const [mentor, setMentor] = useState(null);
   const [messages, setMessages] = useState([
     {
-      text: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.",
+      text: "I am mentor how can I help you?",
       sender: "mentor",
-      timestamp: "6.30 pm",
+      timestamp: "6:30 PM",
     },
     {
-      text: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour.",
+      text: "No need, thanks",
       sender: "user",
-      timestamp: "6.34 pm",
-    },
-    {
-      text: "The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English.",
-      sender: "mentor",
-      timestamp: "6.38 pm",
-    },
-    {
-      text: "How are you",
-      sender: "mentor",
-      timestamp: "6.39 pm",
-    },
-    {
-      text: "I am good you",
-      sender: "user",
-      timestamp: "6.39 pm",
+      timestamp: "6:34 PM",
     },
   ]);
   const [newMessage, setNewMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMentor = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5000/api/user/${mentorId}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setMentor(data);
+      } catch (error) {
+        console.error("Error fetching mentor:", error);
+        setError("Mentor not found");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMentor();
+  }, [mentorId]);
 
   const handleSendMessage = () => {
     if (newMessage.trim()) {
@@ -51,6 +59,14 @@ const Conversation = () => {
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   if (!mentor) {
     return <div>Mentor not found</div>;
   }
@@ -60,12 +76,12 @@ const Conversation = () => {
       <div className="flex items-center p-4 bg-white border-b border-gray-300">
         <img
           className="w-12 h-12 rounded-full"
-          src={mentor.img}
-          alt={mentor.name}
+          src={mentor.user.img || "default-image-url"} // Provide a default image URL if necessary
+          alt={mentor.user.fullName}
         />
         <div className="ml-4">
-          <h3 className="text-lg font-bold">{mentor.name}</h3>
-          <p className="text-gray-600 capitalize">{mentor.role}</p>
+          <h3 className="text-lg font-bold">{mentor.user.fullName}</h3>
+          <p className="text-gray-600 capitalize">Mentor</p>
         </div>
         <div className="ml-auto text-purple-600 font-semibold">
           <Link to={"/"}>

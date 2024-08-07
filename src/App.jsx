@@ -1,9 +1,11 @@
-import Mentors from "./Pages/MentorPage/Mentors";
+import { Outlet } from "react-router-dom";
+import Navigation from "./Components/ui/NavigationBar/Navigation";
 
 const App = () => {
   return (
     <div>
-      <Mentors />
+      <Navigation />
+      <Outlet />
     </div>
   );
 };
